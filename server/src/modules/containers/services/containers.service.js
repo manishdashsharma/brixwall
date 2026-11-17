@@ -21,9 +21,9 @@ const readHealthFromStatus = (status) => {
   return match[1] === 'health: starting' ? 'starting' : match[1];
 };
 
-const toListPorts = (ports = []) => {
+const toListPorts = (ports) => {
   const unique = new Map();
-  ports
+  (ports ?? [])
     .filter((port) => port.PublicPort)
     .forEach((port) => {
       const key = `${port.PublicPort}:${port.PrivatePort}/${port.Type}`;
@@ -36,7 +36,7 @@ const toListPorts = (ports = []) => {
   return [...unique.values()];
 };
 
-const toInspectPorts = (ports = {}) => {
+const toInspectPorts = (ports) => {
   const unique = new Map();
   Object.entries(ports ?? {}).forEach(([binding, hosts]) => {
     const [privatePort, type] = binding.split('/');
