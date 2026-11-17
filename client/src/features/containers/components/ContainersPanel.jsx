@@ -2,6 +2,7 @@ import Panel from '../../../components/ui/Panel.jsx';
 import StatusDot from '../../../components/ui/StatusDot.jsx';
 import { brickColorFor } from '../../../lib/brickColors.js';
 import { cn } from '../../../lib/cn.js';
+import ContainerIconTile from './ContainerIconTile.jsx';
 import { containerLabel, containerTone } from '../../../lib/containerStatus.js';
 
 export default function ContainersPanel({ containers, selectedId, onSelect, onClose }) {
@@ -28,11 +29,7 @@ export default function ContainersPanel({ containers, selectedId, onSelect, onCl
                   container.id === selectedId ? 'bg-white/15' : 'hover:bg-white/10'
                 )}
               >
-                <span
-                  aria-hidden="true"
-                  className="h-8 w-2 shrink-0 rounded-full"
-                  style={{ backgroundColor: brickColorFor(container.name).base }}
-                />
+                <ContainerIconTile container={container} color={brickColorFor(container.name)} />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-black">{container.name}</span>
                   <span className="block truncate text-xs font-semibold text-white/60">{container.image}</span>

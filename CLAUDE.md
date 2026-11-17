@@ -123,6 +123,7 @@ Settled 2026-11-17: Zustand for client state, TanStack Query for one-off GETs, D
 | Frontend | React 19, Vite 8, Tailwind 4 |
 | Client state | Zustand (`client/src/store/wall.store.js`) |
 | Server state | TanStack Query for one-off GETs; the live wall comes from the SSE stream |
+| Icons | lucide-react (UI and per-container icons) |
 | Test kit | Bash, compatible with macOS bash 3.2 (no `mapfile`, no associative arrays) |
 
 ---

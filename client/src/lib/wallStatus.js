@@ -4,6 +4,8 @@ const wallStatus = ({ hasSnapshot, connection, dockerOnline, dockerMessage, summ
   if (!hasSnapshot && connection === 'reconnecting') {
     return {
       tone: 'bad',
+      weather: 'storm',
+      mood: 'worried',
       label: 'Server offline',
       bubble: 'I can\'t reach the Brixwall server. Is it running?',
       notice: {
@@ -13,14 +15,30 @@ const wallStatus = ({ hasSnapshot, connection, dockerOnline, dockerMessage, summ
     };
   }
   if (!hasSnapshot) {
-    return { tone: 'off', label: 'Connecting', bubble: 'Spinning up the wall...', notice: null };
+    return {
+      tone: 'off',
+      weather: 'clear',
+      mood: 'calm',
+      label: 'Connecting',
+      bubble: 'Spinning up the wall...',
+      notice: null,
+    };
   }
   if (connection === 'reconnecting') {
-    return { tone: 'warn', label: 'Reconnecting', bubble: 'Lost the server. Reconnecting...', notice: null };
+    return {
+      tone: 'warn',
+      weather: 'cloudy',
+      mood: 'worried',
+      label: 'Reconnecting',
+      bubble: 'Lost the server. Reconnecting...',
+      notice: null,
+    };
   }
   if (!dockerOnline) {
     return {
       tone: 'bad',
+      weather: 'storm',
+      mood: 'worried',
       label: 'Docker offline',
       bubble: 'Docker is asleep. Wake it up and I\'ll rebuild!',
       notice: {
@@ -32,6 +50,8 @@ const wallStatus = ({ hasSnapshot, connection, dockerOnline, dockerMessage, summ
   if (summary.total === 0) {
     return {
       tone: 'off',
+      weather: 'clear',
+      mood: 'calm',
       label: 'No containers',
       bubble: 'No containers yet. Start one and watch it land!',
       notice: {
@@ -41,10 +61,19 @@ const wallStatus = ({ hasSnapshot, connection, dockerOnline, dockerMessage, summ
     };
   }
   if (summary.allHealthy) {
-    return { tone: 'ok', label: 'All healthy', bubble: 'All healthy! Flag is up!', notice: null };
+    return {
+      tone: 'ok',
+      weather: 'clear',
+      mood: 'happy',
+      label: 'All healthy',
+      bubble: 'All healthy! Flag is up!',
+      notice: null,
+    };
   }
   return {
     tone: 'warn',
+    weather: 'cloudy',
+    mood: 'worried',
     label: attentionLabel(summary.total - summary.healthy),
     bubble: `${summary.healthy} of ${summary.total} healthy. Keep building!`,
     notice: null,

@@ -1,5 +1,5 @@
+import { X } from 'lucide-react';
 import { cn } from '../../lib/cn.js';
-import Icon from './Icon.jsx';
 
 export default function Panel({ title, onClose, className, headerExtra, children }) {
   return (
@@ -21,7 +21,7 @@ export default function Panel({ title, onClose, className, headerExtra, children
             aria-label={`Close ${title}`}
             className="rounded-lg p-1.5 text-white/70 transition hover:bg-white/10 hover:text-white"
           >
-            <Icon name="close" />
+            <X aria-hidden="true" size={16} strokeWidth={2.5} />
           </button>
         </div>
       </header>

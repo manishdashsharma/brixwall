@@ -25,6 +25,7 @@ const PALETTE = {
   N: '#9aa1ad',
   n: '#666d79',
   m: '#bcc2cc',
+  Q: '#6ec3ff',
 };
 
 const HERO_HEAD = [
@@ -35,6 +36,37 @@ const HERO_HEAD = [
   '....HSSSESS...',
   '....HSSSSSS...',
   '.....sSSSs....',
+];
+
+const HERO_HEAD_HAPPY = [
+  '....yYYYYy....',
+  '...yYYYYYYy...',
+  '...yYYYYYYYYY.',
+  '....HSSSSSS...',
+  '....HSSSESS...',
+  '....HSSSSSE...',
+  '.....sSEEs....',
+];
+
+const HERO_HEAD_WORRIED = [
+  '....yYYYYy....',
+  '...yYYYYYYy...',
+  '...yYYYYYYYYY.',
+  '....HSSSSSSQ..',
+  '....HSSSESSQ..',
+  '....HSSSSSS...',
+  '.....sSESs....',
+];
+
+const CRACK = [
+  '.....D..............',
+  '....D.D........D....',
+  '...D...D......D.D...',
+  '..D.....DD...D......',
+  '.........D..D.......',
+  '..........DD........',
+  '...........D........',
+  '...........D........',
 ];
 
 const HERO_BODY = [
@@ -265,10 +297,37 @@ const makeParachute = (color) => {
   return sprite;
 };
 
+const makeDisc = (key, size, fill, edge) => {
+  if (cache.has(key)) {
+    return cache.get(key);
+  }
+  const { canvas, context } = createCanvas(size, size);
+  const radius = size / 2;
+  for (let y = 0; y < size; y += 1) {
+    for (let x = 0; x < size; x += 1) {
+      const distance = Math.hypot(x + 0.5 - radius, y + 0.5 - radius);
+      if (distance <= radius) {
+        context.fillStyle = distance > radius - 1.2 ? edge : fill;
+        context.fillRect(x, y, 1, 1);
+      }
+    }
+  }
+  const sprite = { url: canvas.toDataURL(), width: size, height: size };
+  cache.set(key, sprite);
+  return sprite;
+};
+
 const WHITE_CRATE_PALETTE = { c: '#ffffff', W: '#ffffff' };
+const STORM_CLOUD_PALETTE = { W: '#8593ab', L: '#5f6c85' };
 
 const SPRITES = {
   heroIdle: makeSprite('hero:idle', [...HERO_HEAD, ...HERO_BODY, ...HERO_LEGS_STAND]),
+  heroHappy: makeSprite('hero:happy', [...HERO_HEAD_HAPPY, ...HERO_BODY, ...HERO_LEGS_STAND]),
+  heroWorried: makeSprite('hero:worried', [...HERO_HEAD_WORRIED, ...HERO_BODY, ...HERO_LEGS_STAND]),
+  crack: makeSprite('crack', CRACK),
+  stormCloud: makeSprite('cloud:storm', CLOUD, STORM_CLOUD_PALETTE),
+  sun: makeDisc('sun', 14, '#ffd84a', '#f5a524'),
+  moon: makeDisc('moon', 12, '#eef2ff', '#bcc6dc'),
   heroWalk: makeSprite('hero:walk', [...HERO_HEAD, ...HERO_BODY, ...HERO_LEGS_STRIDE]),
   heroJump: makeSprite('hero:jump', [...HERO_HEAD, ...HERO_BODY, ...HERO_LEGS_JUMP]),
   crate: makeSprite('crate', CRATE),

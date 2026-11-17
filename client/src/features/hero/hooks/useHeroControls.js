@@ -6,6 +6,7 @@ const JUMP_VELOCITY = 880;
 const STEP_MS = 140;
 const MAX_FRAME_SECONDS = 0.05;
 const START_RATIO = 0.06;
+const HEAD_INSET = 6;
 const LEFT_KEYS = ['ArrowLeft', 'KeyA'];
 const RIGHT_KEYS = ['ArrowRight', 'KeyD'];
 const JUMP_KEYS = ['Space', 'ArrowUp', 'KeyW'];
@@ -31,15 +32,28 @@ const poseFor = (motion, direction) => {
   return Math.floor(motion.stepClock / STEP_MS) % 2 === 0 ? 'walk' : 'idle';
 };
 
-const useHeroControls = ({ sceneWidth, heroWidth }) => {
+const useHeroControls = ({ sceneWidth, heroWidth, heroHeight, onMove, onApex }) => {
   const [hero, setHero] = useState({ x: 0, y: 0, facing: 1, pose: 'idle', ready: false });
   const pressed = useRef(new Set());
-  const motion = useRef({ x: null, y: 0, vy: 0, facing: 1, stepClock: 0, jumpQueued: false });
-  const bounds = useRef({ sceneWidth, heroWidth });
+  const motion = useRef({
+    x: null,
+    y: 0,
+    vy: 0,
+    facing: 1,
+    stepClock: 0,
+    jumpQueued: false,
+    reportedX: null,
+  });
+  const bounds = useRef({ sceneWidth, heroWidth, heroHeight });
+  const callbacks = useRef({ onMove, onApex });
 
   useEffect(() => {
-    bounds.current = { sceneWidth, heroWidth };
-  }, [sceneWidth, heroWidth]);
+    bounds.current = { sceneWidth, heroWidth, heroHeight };
+  }, [sceneWidth, heroWidth, heroHeight]);
+
+  useEffect(() => {
+    callbacks.current = { onMove, onApex };
+  }, [onMove, onApex]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -77,7 +91,7 @@ const useHeroControls = ({ sceneWidth, heroWidth }) => {
       const seconds = Math.min((now - lastTime) / 1000, MAX_FRAME_SECONDS);
       lastTime = now;
       const state = motion.current;
-      const { sceneWidth: width, heroWidth: size } = bounds.current;
+      const { sceneWidth: width, heroWidth: size, heroHeight: tall } = bounds.current;
 
       if (width > 0) {
         const direction = directionFrom(pressed.current);
@@ -92,9 +106,13 @@ const useHeroControls = ({ sceneWidth, heroWidth }) => {
         state.jumpQueued = false;
 
         if (state.y > 0 || state.vy > 0) {
+          const wasRising = state.vy > 0;
           state.vy -= GRAVITY * seconds;
           state.y = Math.max(0, state.y + state.vy * seconds);
           state.vy = state.y === 0 ? 0 : state.vy;
+          if (wasRising && state.vy <= 0 && state.y > 0) {
+            callbacks.current.onApex?.({ x: state.x + size / 2, y: state.y + tall - HEAD_INSET });
+          }
         }
 
         const next = {
@@ -104,6 +122,10 @@ const useHeroControls = ({ sceneWidth, heroWidth }) => {
           pose: poseFor(state, direction),
           ready: true,
         };
+        if (next.x !== state.reportedX) {
+          state.reportedX = next.x;
+          callbacks.current.onMove?.(next.x);
+        }
         setHero((previous) => (
           previous.x === next.x
           && previous.y === next.y

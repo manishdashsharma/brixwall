@@ -1,6 +1,6 @@
 # Brixwall — Frontend
 
-React 19 · Vite 8 · Tailwind 4 · Zustand · TanStack Query
+React 19 · Vite 8 · Tailwind 4 · Zustand · TanStack Query · lucide-react
 
 Read `../CLAUDE.md` first. This file is the enforceable frontend spec. The API contract is `../api/containers.md`.
 
@@ -36,23 +36,24 @@ src/
   store/
     wall.store.js       useWallStore: snapshot, bricks, selection, tabs.
   features/
-    scenery/components/ Sky, Foliage, Ground, Ledge. Decorative only.
+    scenery/components/ Sky, DriftingSprite, WeatherOverlay, Foliage, Ground, Ledge.
     wall/
-      components/       Wall, Brick, Parachute, GhostSlot, WallNotice, Flag, WallProgress.
+      components/       Wall, Brick, Parachute, LandingBurst, GhostSlot, WallNotice, Flag,
+                        WallProgress, Celebration.
       hooks/            useContainerStream (EventSource → store).
-      lib/              wallLayout (columns, brick size, slot positions).
+      lib/              wallLayout (columns, brick size, slot positions), reachableBrick.
     hero/
       components/       Hero, SpeechBubble.
       hooks/            useHeroControls (keyboard, physics, rAF loop).
     containers/
       api/              useContainer, useContainerLogs.
-      components/       ContainerDetails, ContainersPanel, LogsPanel, DetailRow.
+      components/       ContainerDetails, ContainersPanel, ContainerIconTile, LogsPanel, DetailRow.
   components/
-    ui/                 PixelSprite, Panel, StatusDot, Icon.
+    ui/                 PixelSprite, Panel, StatusDot.
     layout/             TopBar.
   hooks/                useElementSize.
-  lib/                  cn, sprites, tileStyle, brickColors, containerStatus, wallStatus,
-                        mergeBricks, format.
+  lib/                  cn, hash, sprites, tileStyle, brickColors, containerIcon, containerStatus,
+                        wallStatus, mergeBricks, format.
   index.css             Tailwind import, @theme tokens and keyframes, utilities.
   main.jsx              createRoot. No logic here.
 ```
@@ -85,7 +86,19 @@ One component per file. The file is named after the component.
 - Brick order follows the snapshot (`createdAt`, oldest at the bottom). New bricks append.
 - `Brick` listens for `animationend` on its own wrapper only (`event.target === event.currentTarget`) so the parachute's animation never ends the drop.
 - `EventSource` reconnects on its own. `onerror` sets `connection: 'reconnecting'`; no manual retry loop.
-- `wallStatus` turns store state into the health pill, the hero's speech bubble and the wall notice. Add new states there, not in components.
+- `wallStatus` turns store state into the health pill, the hero's speech bubble, the wall notice, the `weather` (`clear` / `cloudy` / `storm`) and the hero's `mood` (`calm` / `happy` / `worried`). Add new states there, not in components.
+- Weather mirrors health: all healthy → sun; anything needing attention → clouds and a grey tint; server or Docker offline → night, rain and soft lightning.
+- `celebrationId` in the store increments when the wall becomes all healthy; `Celebration` (confetti + banner) and the hero's hop are keyed on it so they replay once per transition.
+- `Wall` reports its frame (size, pillar, base, brick layout) to the store via `setWallFrame`. `Hero` uses it to lift the speech bubble above the wall, and `reachableBrick` uses it for the head-bump: at the top of a jump, the highest placed brick in the hero's column that the head reached is bumped and selected.
+- Parallax: `Hero` reports its x through `onMove`; `GameScreen` writes it to the `--hero-x` CSS variable on the scene, and the mountain and hill layers translate by a fraction of it. No re-render per frame.
+
+---
+
+## Icons
+
+- **lucide-react** for every UI icon (tabs, close, keyboard hint) and for container icons. No hand-drawn SVG icons.
+- `containerIconFor(container)` picks an icon from the container name and image (database, cache, proxy, worker, queue, storage...) and falls back to a stable hash-picked icon. Add new matches to `ICON_RULES`, most specific first.
+- Render a picked icon with `createElement(containerIconFor(container), props)`, never by assigning it to a capitalised variable during render.
 
 ---
 
@@ -102,7 +115,9 @@ One component per file. The file is named after the component.
 
 - Pixel art is defined as character grids in `lib/sprites.js` and painted to a canvas once at import, then used as data URLs. Every row in a grid must be the same length.
 - Render sprites with `PixelSprite` (integer `scale`) or `tileStyle(sprite, scale)` for repeating tiles. Always keep the `pixelated` utility on them.
-- The hero is 14×20: yellow hard hat, orange vest, blue crate backpack. Keep it original.
+- The hero is 14×20: yellow hard hat, orange vest, blue crate backpack. Keep it original. Idle has three faces (`heroIdle`, `heroHappy`, `heroWorried` with a sweat drop).
+- Stopped bricks get the `crack` sprite overlay. Sun and moon are generated discs (`makeDisc`).
+- The drop is 6 s with touchdown at 80 % (`DROP_TOUCHDOWN_MS = 4800` in `Brick`). Change both together.
 
 ---
 

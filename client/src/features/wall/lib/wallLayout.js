@@ -1,10 +1,10 @@
-const MAX_BRICK_WIDTH = 216;
+const MAX_BRICK_WIDTH = 168;
 const MIN_BRICK_WIDTH = 72;
-const BRICK_RATIO = 0.34;
+const BRICK_RATIO = 0.36;
 const MIN_COLUMNS = 2;
 const PREFERRED_MAX_COLUMNS = 6;
 const MAX_COLUMNS = 12;
-const MIN_SLOTS = 8;
+const MIN_SLOTS = 4;
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
@@ -15,7 +15,8 @@ const sizeFor = (width, columns) => {
 
 const computeWallLayout = ({ width, height, count }) => {
   const slots = Math.max(count + 1, MIN_SLOTS);
-  let columns = clamp(Math.floor(width / MAX_BRICK_WIDTH), MIN_COLUMNS, PREFERRED_MAX_COLUMNS);
+  const columnsByWidth = clamp(Math.floor(width / MAX_BRICK_WIDTH), MIN_COLUMNS, PREFERRED_MAX_COLUMNS);
+  let columns = clamp(slots, MIN_COLUMNS, columnsByWidth);
   let size = sizeFor(width, columns);
 
   while (Math.ceil(slots / columns) * size.brickHeight > height && columns < MAX_COLUMNS) {
@@ -29,7 +30,7 @@ const computeWallLayout = ({ width, height, count }) => {
     rows,
     brickWidth: size.brickWidth,
     brickHeight: size.brickHeight,
-    wallWidth: Math.round(size.brickWidth * (columns + 0.5)),
+    wallWidth: Math.round(size.brickWidth * (columns + (rows > 1 ? 0.5 : 0))),
     wallHeight: rows * size.brickHeight,
   };
 };

@@ -1,13 +1,13 @@
+import { Boxes, BrickWall, ScrollText } from 'lucide-react';
 import { cn } from '../../lib/cn.js';
 import { SPRITES } from '../../lib/sprites.js';
-import Icon from '../ui/Icon.jsx';
 import PixelSprite from '../ui/PixelSprite.jsx';
 import StatusDot from '../ui/StatusDot.jsx';
 
 const TABS = [
-  { id: 'wall', label: 'Wall', icon: 'wall' },
-  { id: 'containers', label: 'Containers', icon: 'box' },
-  { id: 'logs', label: 'Logs', icon: 'logs' },
+  { id: 'wall', label: 'Wall', Icon: BrickWall },
+  { id: 'containers', label: 'Containers', Icon: Boxes },
+  { id: 'logs', label: 'Logs', Icon: ScrollText },
 ];
 
 const HEALTH_TEXT = {
@@ -44,7 +44,7 @@ export default function TopBar({ activeTab, onTabChange, status }) {
                 : 'text-white/80 hover:bg-white/10 hover:text-white'
             )}
           >
-            <Icon name={tab.icon} />
+            <tab.Icon aria-hidden="true" size={16} strokeWidth={2.5} />
             <span className="hidden sm:inline">{tab.label}</span>
           </button>
         ))}
