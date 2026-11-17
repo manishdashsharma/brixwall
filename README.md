@@ -56,12 +56,6 @@ Brixwall comes with a small kit that starts a set of harmless sample containers 
 
 ---
 
-## Status
-
-Brixwall is in early development. The part that reads your containers is working. The game-style wall is being built now.
-
----
-
 ## Open source
 
 Brixwall is free and open source under the MIT License. Ideas, bug reports and contributions are welcome.
