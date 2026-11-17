@@ -67,11 +67,11 @@ Out (do not build until asked):
 
 1. Server: config, logger, Docker socket client, health, containers (list, detail, logs, SSE stream). **Done 2026-11-17, session 1.**
 2. Test kit: `test/spawn.sh`, `test/chaos.sh`, `test/cleanup.sh`. **Done 2026-11-17, session 1.**
-3. Client shell: Vite + React + Tailwind, config module, stream hook. Manish is setting this up.
-4. Wall scene: sky, ground, stone wall frame, bricks from the stream.
-5. Motion: parachute drop, brick fall, status recolour, flag raise.
-6. Hero: keyboard movement and jump.
-7. Brick details popover and the Logs panel.
+3. Client shell: Vite + React + Tailwind, config module, stream hook. **Done 2026-11-17, session 2.**
+4. Wall scene: sky, ground, stone wall frame, bricks from the stream. **Done 2026-11-17, session 2.**
+5. Motion: parachute drop, brick fall, status recolour, flag raise. **Done 2026-11-17, session 2.**
+6. Hero: keyboard movement and jump. **Done 2026-11-17, session 2.**
+7. Brick details card, Containers panel and Logs panel. **Done 2026-11-17, session 2.**
 8. README with screenshots/GIF, publish.
 
 Update this list as steps land, with the date and session file.
@@ -79,9 +79,9 @@ Update this list as steps land, with the date and session file.
 ### Open decisions
 
 Ask Manish before building anything that depends on these:
-- Client state library (Zustand as in Colabrix, or React state only) and whether TanStack Query is used for the few one-off GETs.
-- Rendering approach for the scene: DOM + CSS for bricks with canvas for the background, or everything on canvas.
-- How the Brixwall logo looks.
+- How the Brixwall logo looks (the pixel crate is a placeholder mark).
+
+Settled 2026-11-17: Zustand for client state, TanStack Query for one-off GETs, DOM + CSS bricks with canvas-generated pixel sprites.
 
 ---
 
@@ -121,6 +121,8 @@ Ask Manish before building anything that depends on these:
 | Validation | Zod 4 |
 | Logging | winston |
 | Frontend | React 19, Vite 8, Tailwind 4 |
+| Client state | Zustand (`client/src/store/wall.store.js`) |
+| Server state | TanStack Query for one-off GETs; the live wall comes from the SSE stream |
 | Test kit | Bash, compatible with macOS bash 3.2 (no `mapfile`, no associative arrays) |
 
 ---

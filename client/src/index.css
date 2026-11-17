@@ -1,1 +1,89 @@
 @import "tailwindcss";
+
+@theme {
+  --font-pixel: "Press Start 2P", ui-monospace, monospace;
+  --font-ui: "Nunito", ui-sans-serif, system-ui, sans-serif;
+
+  --color-hud: #172342;
+  --color-hud-edge: #2a3a66;
+  --color-sky-top: #3f9cf0;
+  --color-sky-mid: #6fbcf5;
+  --color-sky-low: #b5e2ff;
+  --color-hill-far: #8fd1a0;
+  --color-hill-near: #5fbf55;
+  --color-stone-edge: #4d535e;
+  --color-flag: #2563eb;
+  --color-ok: #3ddc68;
+  --color-warn: #f5b623;
+  --color-bad: #ef4444;
+  --color-off: #9ca3af;
+
+  --shadow-hud: 0 6px 0 rgba(10, 18, 40, 0.28), 0 12px 24px rgba(10, 18, 40, 0.18);
+
+  --animate-brick-drop: brick-drop 6s linear both;
+  --animate-brick-fall: brick-fall 1.1s cubic-bezier(0.5, 0, 0.9, 0.6) both;
+  --animate-parachute: parachute-release 6s linear both;
+  --animate-drift: drift 120s linear infinite;
+  --animate-bob: bob 1.2s ease-in-out infinite;
+
+  @keyframes brick-drop {
+    0% { transform: translateY(-110vh); }
+    80% { transform: translateY(0); }
+    85% { transform: translateY(-6%); }
+    90% { transform: translateY(0); }
+    95% { transform: translateY(-2%); }
+    100% { transform: translateY(0); }
+  }
+
+  @keyframes parachute-release {
+    0% { transform: translateX(-50%) rotate(-6deg); opacity: 1; }
+    16% { transform: translateX(-50%) rotate(6deg); opacity: 1; }
+    32% { transform: translateX(-50%) rotate(-5deg); opacity: 1; }
+    48% { transform: translateX(-50%) rotate(5deg); opacity: 1; }
+    64% { transform: translateX(-50%) rotate(-3deg); opacity: 1; }
+    80% { transform: translateX(-50%) rotate(0deg); opacity: 1; }
+    100% { transform: translate(-20%, -140%) rotate(18deg); opacity: 0; }
+  }
+
+  @keyframes brick-fall {
+    0% { transform: translateY(0) rotate(0deg); }
+    18% { transform: translateY(-14px) rotate(-3deg); }
+    100% { transform: translateY(110vh) rotate(22deg); }
+  }
+
+  @keyframes drift {
+    from { transform: translateX(-30vw); }
+    to { transform: translateX(115vw); }
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+}
+
+@utility pixelated {
+  image-rendering: pixelated;
+}
+
+@utility brick-ribs {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 10px,
+    rgba(0, 0, 0, 0.13) 10px 13px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-brick-drop,
+  .animate-brick-fall,
+  .animate-parachute {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+
+  .animate-drift,
+  .animate-bob {
+    animation: none;
+  }
+}
